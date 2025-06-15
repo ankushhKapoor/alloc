@@ -3,6 +3,32 @@
 
 extern heap *memspace;
 
+header *findblock_(header *hdr, word allocation, word n) {
+	bool ok;
+	void *mem;
+	header *hdr_;
+	word n_;
+
+	if ((n+allocation) > (Maxwords-2))
+		reterr(ErrNoMem);
+
+	ok = (!(hdr->w)) ? true :
+		(!(hdr->alloced) && (hdr->w >= allocation)) ? true :
+		false;
+
+	if (ok)
+		return hdr;
+	else {
+		mem = $v hdr + (hdr->w*4) + 4;
+		hdr_ = $h mem;
+		n_ = n + hdr->w;
+
+		return findblock_(hdr_, allocation, n_);
+	}
+
+	reterr(ErrUnknown);
+}
+
 void *mkalloc(word words, header *hdr) {
 	void *ret;
 	// void *bytesin;
@@ -15,9 +41,8 @@ void *mkalloc(word words, header *hdr) {
 	// bytesin = ($v (($v hdr) - memspace));
 	// wordsin = (((word)bytesin)/4)+1;
 
-	if (words > (Maxwords-wordsin)) {
+	if (words > (Maxwords-wordsin))
 		reterr(ErrNoMem);
-	}
 
 	hdr->w = words;
 	hdr->alloced = true;
@@ -41,29 +66,37 @@ void *alloc(int32 bytes) {
 	hdr = $h mem;
 
 	if (!(hdr->w)) {
-		if (words > Maxwords) {
+		if (words > Maxwords)
 			reterr(ErrNoMem);
-		}
 
-		//If hdr ka w is empty i.e. pehle se koi initialised memmory nahi hai to call mkalloc
 		mem = mkalloc(words, hdr);
 		if(!mem	)
 			return $v 0;
 
 		return mem;
 
-	} else {
+	} else
 		(void)0;
-	}
 
 	return $v 0;
 }
 
 int main(int argc, char *argv[]) {
+	header *hdr;
 	int8 *p;
 
 	p = alloc(7);
-	printf("0x%x\n", $i p);
+	printf("Allocated 0x%x\n", $i p);
 
+	hdr = findblock(500);
+	if(!hdr) {
+		printf("Error %d \n", errno);
+
+		return -1;
+		
+	}
+	printf("Memspace = 0x%x\n", $i memspace);
+	printf("Block = 0x%x\n", $i hdr);
+	
 	return 0;
 }

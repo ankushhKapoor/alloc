@@ -13,7 +13,8 @@
 #define unused __attribute__((__unused__))
 #define Maxwords ((1024*1024*1024/4)-1)
 
-#define ErrNoMem 1
+#define ErrNoMem	1
+#define ErrUnknown	2
 
 typedef unsigned char int8;
 typedef unsigned short int int16;
@@ -40,8 +41,17 @@ typedef struct packed s_header header;
 #define $v (void *)
 #define $h (header *)
 
-#define reterr(x) errno = (x); return $v 0
+/*
+Use do-while loop so we can use reterr in a fn without {} (loop is considered as a single statement)
+and did while(false) so the loop runs only one time
+*/ 
+#define reterr(x) do { \
+	errno = (x); \
+	return $v 0; \
+} while(false)
+#define findblock(x) findblock_((header *)memspace,(x),0)
 
+header *findblock_(header*,word,word);
 void *mkalloc(word, header*);
 void *alloc(int32);
 int main(int,char**);
