@@ -61,42 +61,38 @@ void *alloc(int32 bytes) {
 	words = (!(bytes % 4)) ?
 		bytes/4 :
 		(bytes/4) + 1;
+		
+	if (words > Maxwords)
+		reterr(ErrNoMem);
 
-	mem = $v memspace;	
-	hdr = $h mem;
+	hdr = findblock(words);
+	if(!hdr)
+		return $v 0;
 
-	if (!(hdr->w)) {
-		if (words > Maxwords)
-			reterr(ErrNoMem);
+	mem = mkalloc(words, hdr);
+	if(!mem	)
+		return $v 0;
 
-		mem = mkalloc(words, hdr);
-		if(!mem	)
-			return $v 0;
-
-		return mem;
-
-	} else
-		(void)0;
+	return mem;
 
 	return $v 0;
 }
 
 int main(int argc, char *argv[]) {
-	header *hdr;
 	int8 *p;
+	int8 *p2;
+	int8 *p3;
+
+	printf("Memspace = 0x%x\n", $i memspace);
 
 	p = alloc(7);
-	printf("Allocated 0x%x\n", $i p);
-
-	hdr = findblock(500);
-	if(!hdr) {
-		printf("Error %d \n", errno);
-
-		return -1;
-		
-	}
-	printf("Memspace = 0x%x\n", $i memspace);
-	printf("Block = 0x%x\n", $i hdr);
+	printf("Alloc1 0x%x\n", $i p);
 	
+	p2 = alloc(2000);
+	printf("Alloc2 0x%x\n", $i p2);
+	
+	p3 = alloc(1);
+	printf("Alloc3 0x%x\n", $i p3);
+
 	return 0;
 }
