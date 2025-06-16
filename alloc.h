@@ -15,8 +15,10 @@
 #define unused __attribute__((__unused__))
 #define Maxwords ((1024*1024*1024/4)-1)
 
+#define ErrNoErr	0
 #define ErrNoMem	1
 #define ErrUnknown	2
+#define Err2xFree	4
 
 typedef unsigned char int8;
 typedef unsigned short int int16;
@@ -58,7 +60,7 @@ and did while(false) so the loop runs only one time
 #define allocm(x) alloc((x)*1024*1024)
 #define allocg(x) alloc((x)*1024*1024*1024)
 
-// public bool destory(void*);	
+public bool destory(void*);	
 private void show_(header *);
 private header *findblock_(header*,word,word);
 private void *mkalloc(word, header*);

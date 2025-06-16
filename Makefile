@@ -1,5 +1,5 @@
 flags=-m32 -O2 -Wall -std=c2x
-ldflags=-L$(HOME)/tools/birchutils -l:birchutils32.so
+ldflags = -L$(HOME)/tools/birchutils -lbirchutils32
 
 .PHONY: clean
 

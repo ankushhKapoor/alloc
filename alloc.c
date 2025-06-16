@@ -3,6 +3,26 @@
 
 extern heap *memspace;
 
+public bool destroy(void *addr) {
+	header *p;
+	int16 n;
+	void *mem;
+
+	mem = addr - 4;
+	p = $h mem;
+
+	if (!(p->w) || !(p->alloced))
+		reterr(Err2xFree);
+	else
+		(void)0;
+	
+	n = (p->w * 4);
+	zero($1 addr, n);
+	p->alloced = false;
+
+	return true;
+}
+
 private header *findblock_(header *hdr, word allocation, word n) {
 	bool ok;
 	void *mem;
@@ -84,8 +104,8 @@ private void show_(header *hdr) {
 	int32 n;
 
 	for (n=1, p=hdr; p->w; mem=$v p + ((p->w+1)*4), p=mem, n++)
-		printf("Alloc %d = %d %s words\n",
-		n, p->w, (p->alloced) ? "alloced" : "free");
+		printf("0x%.08x Alloc %d = %d %s words\n",
+		$i ($1 p+4), n, p->w, (p->alloced) ? "alloced" : "free");
 
 	return;
 }
@@ -94,12 +114,20 @@ int main(int argc, char *argv[]) {
 	int8 *p;
 	int8 *p2;
 	int8 *p3;
+	int8 *p4;
+	bool ret;
 
 	printf("Memspace = 0x%x\n", $i memspace);
 
 	p = alloc(7);
+	printf("0x%.08x\n",$i p);
 	p2 = alloc(2000);
 	p3 = alloc(1);
+
+	show();
+	ret = destroy(p2);
+
+	p4 = alloc(1800);
 
 	show();
 
