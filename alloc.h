@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <birchutils.h>
 
+#define public  __attribute__((visibility("default")))
+#define private static
 #define packed __attribute__((__packed__))
 #define unused __attribute__((__unused__))
 #define Maxwords ((1024*1024*1024/4)-1)
@@ -49,11 +51,16 @@ and did while(false) so the loop runs only one time
 	errno = (x); \
 	return $v 0; \
 } while(false)
-#define findblock(x) findblock_((header *)memspace,(x),0)
+// Pass x in parenthesis () not directly to support expressions too if they are passed not just numbers
+#define findblock(x) findblock_($h memspace,(x),0)
 #define show() show_($h memspace)
+#define allock(x) alloc((x)*1024)
+#define allocm(x) alloc((x)*1024*1024)
+#define allocg(x) alloc((x)*1024*1024*1024)
 
-void show_(header *);
-header *findblock_(header*,word,word);
-void *mkalloc(word, header*);
-void *alloc(int32);
+// public bool destory(void*);	
+private void show_(header *);
+private header *findblock_(header*,word,word);
+private void *mkalloc(word, header*);
+public void *alloc(int32);
 int main(int,char**);

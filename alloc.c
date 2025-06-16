@@ -3,7 +3,7 @@
 
 extern heap *memspace;
 
-header *findblock_(header *hdr, word allocation, word n) {
+private header *findblock_(header *hdr, word allocation, word n) {
 	bool ok;
 	void *mem;
 	header *hdr_;
@@ -29,7 +29,7 @@ header *findblock_(header *hdr, word allocation, word n) {
 	reterr(ErrUnknown);
 }
 
-void *mkalloc(word words, header *hdr) {
+private void *mkalloc(word words, header *hdr) {
 	void *ret;
 	// void *bytesin;
 	word wordsin;
@@ -53,7 +53,7 @@ void *mkalloc(word words, header *hdr) {
 
 }
 
-void *alloc(int32 bytes) {
+public void *alloc(int32 bytes) {
 	word words;
 	header *hdr;
 	void *mem;
@@ -78,7 +78,7 @@ void *alloc(int32 bytes) {
 	return $v 0;
 }
 
-void show_(header *hdr) {
+private void show_(header *hdr) {
 	header *p;
 	void *mem;
 	int32 n;
