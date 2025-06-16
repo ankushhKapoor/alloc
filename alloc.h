@@ -50,7 +50,9 @@ and did while(false) so the loop runs only one time
 	return $v 0; \
 } while(false)
 #define findblock(x) findblock_((header *)memspace,(x),0)
+#define show() show_($h memspace)
 
+void show_(header *);
 header *findblock_(header*,word,word);
 void *mkalloc(word, header*);
 void *alloc(int32);
