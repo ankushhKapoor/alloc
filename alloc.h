@@ -61,7 +61,7 @@ and did while(false) so the loop runs only one time
 #define allocm(x) alloc((x)*1024*1024)
 #define allocg(x) alloc((x)*1024*1024*1024)
 
-public bool destory(void*);	
+public bool destroy(void*);	
 private void show_(header *);
 private header *findblock_(header*,word,word);
 private void *mkalloc(word, header*);
