@@ -7,11 +7,13 @@ public bool destroy(void *addr) {
 	header *p;
 	int16 n;
 	void *mem;
+	word w;
 
 	mem = addr - 4;
 	p = $h mem;
+	w = (p->w == ZeroWords) ? 0 : p->w;
 
-	if (!(p->w) || !(p->alloced))
+	if ((!w) || !(p->alloced))
 		reterr(Err2xFree);
 	else
 		(void)0;
@@ -27,21 +29,22 @@ private header *findblock_(header *hdr, word allocation, word n) {
 	bool ok;
 	void *mem;
 	header *hdr_;
-	word n_;
+	word n_, w;
 
 	if ((n+allocation) > (Maxwords-2))
-		reterr(ErrNoMem);
-
-	ok = (!(hdr->w)) ? true :
-		(!(hdr->alloced) && (hdr->w >= allocation)) ? true :
+	reterr(ErrNoMem);
+	
+	w = (hdr->w == ZeroWords) ? 0 : hdr->w;
+	ok = (!w) ? true :
+		(!(hdr->alloced) && (w >= allocation)) ? true :
 		false;
 
 	if (ok)
 		return hdr;
 	else {
-		mem = $v hdr + (hdr->w*4) + 4;
+		mem = $v hdr + (w*4) + 4;
 		hdr_ = $h mem;
-		n_ = n + hdr->w;
+		n_ = n + w;
 
 		return findblock_(hdr_, allocation, n_);
 	}
@@ -50,26 +53,30 @@ private header *findblock_(header *hdr, word allocation, word n) {
 }
 
 private void *mkalloc(word words, header *hdr) {
-	void *ret;
-	// void *bytesin;
-	word wordsin;
+	void *ret, *mem;
+	word wordsin, diff;
+	header *hdr_;
 
 	wordsin = ((word *)hdr - (word *)memspace) + 1;
 
-	// Invalid pointer arithemetic (Done for GCC but not actually recommended) -by Jonas Birch
-	// void has byte granularity in GCC
-	// bytesin = ($v (($v hdr) - memspace));
-	// wordsin = (((word)bytesin)/4)+1;
-
 	if (words > (Maxwords-wordsin))
 		reterr(ErrNoMem);
+
+	if (hdr->w > words) {
+		diff = hdr->w - words;
+
+		mem = $v (($1 hdr) + (words*4) + 4);
+		hdr_ = 	$h mem;
+		diff--;
+		hdr_->w = (!diff) ? ZeroWords : diff;
+		hdr_->alloced = false;
+	}
 
 	hdr->w = words;
 	hdr->alloced = true;
 	ret = (void *)((char *)hdr + 4); 
 	
 	return ret;
-	// ret = ($v hdr)+4;
 
 }
 
@@ -102,32 +109,33 @@ private void show_(header *hdr) {
 	header *p;
 	void *mem;
 	int32 n;
+	word w;
 
-	for (n=1, p=hdr; p->w; mem=$v p + ((p->w+1)*4), p=mem, n++)
-		printf("0x%.08x Alloc %d = %d %s words\n",
-		$i ($1 p+4), n, p->w, (p->alloced) ? "alloced" : "free");
+	for (n=1, p=hdr, w=(p->w == ZeroWords) ? 0 : p->w; p->w;
+		mem=$v p + ((w+1)*4), p=mem, w=(p->w == ZeroWords) ? 0 : p->w, n++)
+        {
+            if (!w) {
+                printf("Empty header at 0x%.08x, moving on\n", $i p);
+                continue;
+            }
+            printf("0x%.08x Alloc %d = %d %s words\n", $i ($1 p+4),
+                 n, w, (p->alloced) ? "alloced" : "free");
+        }
 
 	return;
 }
 
 int main(int argc, char *argv[]) {
-	int8 *p;
+	int8 *p1;
 	int8 *p2;
 	int8 *p3;
 	int8 *p4;
-	bool ret;
 
-	printf("Memspace = 0x%x\n", $i memspace);
-
-	p = alloc(7);
-	printf("0x%.08x\n",$i p);
+	p1 = alloc(7);
 	p2 = alloc(2000);
-	p3 = alloc(1);
-
-	show();
-	ret = destroy(p2);
-
-	p4 = alloc(1800);
+	p3 = alloc(10);
+	destroy(p2);
+	p4 = alloc(1996);
 
 	show();
 
