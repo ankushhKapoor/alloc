@@ -115,14 +115,6 @@ The allocator reuses the memory freed by p2 when allocating p4. This demonstrate
 
 ---
 
-## ⚙ Dependencies
-
-This project requires [`birchutils`](https://repo.doctorbirch.com/) by **Dr. Jonas Birch**.
-
-> 🛠 Detailed 32-bit build and installation instructions for `birchutils` will be added soon in a separate `BUILD.md` file. Stay tuned!
-
----
-
 ##  Credits
 
 This project is inspired by a tutorial by **Dr. Jonas Birch** on [YouTube](https://www.youtube.com/@dr-Jonas-Birch), a phenomenal programmer whose resources deeply shaped this implementation.
@@ -130,8 +122,7 @@ This project is inspired by a tutorial by **Dr. Jonas Birch** on [YouTube](https
 Key contributions from his work include:
 
 * Type definitions and casting macros (`$1`, `$v`, `$h`, etc.)
-* Header utilities in `birchutils.h`
-* Foundational heap setup logic in `heap.asm` and `birchutils.c`
+* Foundational heap setup logic in `heap.asm` 
 
 Although inspired by his work, this is **not a copy-paste implementation**.
 The entire allocator was **understood, redesigned, and written independently** to ensure full conceptual clarity.

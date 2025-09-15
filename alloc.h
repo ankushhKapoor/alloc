@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <errno.h>
-#include <birchutils.h>
 
 #define public  __attribute__((visibility("default")))
 #define private static
@@ -66,4 +65,5 @@ private void show_(header *);
 private header *findblock_(header*,word,word);
 private void *mkalloc(word, header*);
 public void *alloc(int32);
+void zero(int8*,int16);
 int main(int,char**);

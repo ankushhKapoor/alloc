@@ -1,4 +1,4 @@
-/* alloc.c */
+/*glloc.c */
 #include "alloc.h"
 
 extern heap *memspace;
@@ -123,6 +123,16 @@ private void show_(header *hdr) {
         }
 
 	return;
+}
+
+void zero(int8 *str, int16 size) {
+    int8 *p;
+    int16 n;
+
+    for (n=0, p=str; n<size; n++, p++)
+        *p = 0;
+
+    return;
 }
 
 int main(int argc, char *argv[]) {
