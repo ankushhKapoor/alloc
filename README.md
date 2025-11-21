@@ -1,5 +1,5 @@
 
-# Alloc - Custom Memory Allocator in C (32-bit)
+# Alloc - Custom Memory Allocator in C
 
 *A minimal educational memory allocator built for learning low-level memory operations in C.*
 
